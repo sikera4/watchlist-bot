@@ -13,12 +13,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "grammy": "^1.38.4"
+    "firebase": "12.6.0",
+    "grammy": "1.38.4"
   },
   "devDependencies": {
     "@types/node": "22.19.1",
     "@vercel/node": "5.5.13",
-    "typescript": "^5.9.3"
+    "typescript": "5.9.3"
   },
   "engines": {
     "node": "22"
