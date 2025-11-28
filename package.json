@@ -17,6 +17,7 @@
     "grammy": "^1.38.4"
   },
   "devDependencies": {
+    "@types/node": "22.19.1",
     "typescript": "^5.9.3"
   },
   "engines": {
