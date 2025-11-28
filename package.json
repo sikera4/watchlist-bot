@@ -7,7 +7,8 @@
   "private": true,
   "scripts": {
     "preinstall": "npx -y only-allow pnpm",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node dist/bot.js"
   },
   "keywords": [],
   "author": "",
