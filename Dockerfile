@@ -5,15 +5,13 @@ FROM node:22-alpine
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+COPY package*.json ./
 
-RUN npm install pnpm@10.8.1
-RUN pnpm install
+RUN npm install
 
 COPY . .
 
 EXPOSE 3000
 
 # Run the app
-CMD ["pnpm", "start"]
+CMD ["npm", "start"]

@@ -6,7 +6,6 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "preinstall": "npx -y only-allow pnpm",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc && node dist/bot.js"
   },
@@ -21,8 +20,6 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": "22",
-    "pnpm": "10"
-  },
-  "packageManager": "pnpm@10.8.1"
+    "node": "22"
+  }
 }
