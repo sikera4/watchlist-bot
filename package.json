@@ -1,0 +1,26 @@
+{
+  "name": "watchlist-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "preinstall": "npx -y only-allow pnpm",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "grammy": "^1.38.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": "22",
+    "pnpm": "10"
+  },
+  "packageManager": "pnpm@10.8.1"
+}
