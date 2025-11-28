@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@types/node": "22.19.1",
+    "@vercel/node": "5.5.13",
     "typescript": "^5.9.3"
   },
   "engines": {
