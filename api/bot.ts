@@ -46,6 +46,8 @@ bot.on('callback_query:data', async (ctx) => {
     await ctx.reply(formatWatchlist(watchlistWithNeededName.movies), {
       parse_mode: 'HTML'
     });
+
+    await ctx.answerCallbackQuery()
   }
 })
 
