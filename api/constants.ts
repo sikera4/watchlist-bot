@@ -15,4 +15,4 @@ export const enum WatchlistAction {
 
 export const ACTION_DIVIDER = '::';
 
-export const WEB_APP_URL = 'https://t.me/movies_to_watch_test_bot/watchlist';
+export const WEB_APP_URL = 'https://watchlist-mini-app.vercel.app/';
