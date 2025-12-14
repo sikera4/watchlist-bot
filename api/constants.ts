@@ -5,6 +5,7 @@ export const MESSAGES = {
   CREATE_INVITE_LINK: 'Создать ссылку-приглашение для моего списка',
   CHOOSE_WATCHLIST_TO_SHARE:
     'Выберите список для просмотра, которым хотите поделиться:',
+  MANAGE_WATCHLISTS: 'Управлять моими списками для просмотра',
 };
 
 export const enum WatchlistAction {
@@ -13,3 +14,5 @@ export const enum WatchlistAction {
 }
 
 export const ACTION_DIVIDER = '::';
+
+export const WEB_APP_URL = 'https://t.me/movies_to_watch_test_bot/watchlist';
