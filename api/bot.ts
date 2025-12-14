@@ -37,7 +37,7 @@ bot.command('start', async (ctx) => {
     await addUserToWatchlist(userId, startParam);
   }
 
-  await ctx.reply(`${MESSAGES.WELCOME} ${userId}`, {
+  await ctx.reply(MESSAGES.WELCOME, {
     reply_markup: keyboard,
   });
 });
@@ -92,12 +92,17 @@ bot.on('callback_query:data', async (ctx) => {
 
     if (selectedWatchlist) {
       await ctx.reply(`Вы выбрали список: ${selectedWatchlist.name}`);
-      await ctx.reply(formatWatchlist(selectedWatchlist.movies), {
-        parse_mode: 'HTML',
-      });
 
-      await ctx.answerCallbackQuery();
+      if (selectedWatchlist.movies) {
+        await ctx.reply(formatWatchlist(selectedWatchlist.movies), {
+          parse_mode: 'HTML',
+        });
+      } else {
+        await ctx.reply('Список пуст.');
+      }
     }
+
+    await ctx.answerCallbackQuery();
 
     return;
   }
@@ -119,9 +124,9 @@ bot.on('callback_query:data', async (ctx) => {
       await ctx.reply(inviteLink, {
         parse_mode: 'HTML'
       });
-
-      await ctx.answerCallbackQuery();
     }
+
+    await ctx.answerCallbackQuery();
 
     return;
   }
