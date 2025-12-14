@@ -1,6 +1,14 @@
-import { collection, doc, documentId, getDoc, getDocs, query, where } from "firebase/firestore";
-import { db } from "../utilities/initializeFirebase.js";
-import type { List } from "../types.js";
+import {
+  collection,
+  doc,
+  documentId,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
+import { db } from '../utilities/initializeFirebase.js';
+import type { List } from '../types.js';
 
 export const getWatchlists = async (userId: number) => {
   const userDocRef = doc(db, 'users', String(userId));
@@ -8,12 +16,15 @@ export const getWatchlists = async (userId: number) => {
 
   if (userDoc.exists()) {
     const { watchlists } = userDoc.data() as {
-      watchlists: string[]
+      watchlists: string[];
     };
 
     const watchlistsCollection = collection(db, 'watchlists');
 
-    const q = query(watchlistsCollection, where(documentId(), 'in', watchlists));
+    const q = query(
+      watchlistsCollection,
+      where(documentId(), 'in', watchlists)
+    );
 
     const querySnapshot = await getDocs(q);
 
@@ -27,4 +38,4 @@ export const getWatchlists = async (userId: number) => {
   }
 
   return null;
-}
+};

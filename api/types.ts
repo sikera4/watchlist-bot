@@ -8,7 +8,7 @@ export type Movie = {
 
 export type MovieInList = Omit<Movie, 'genre_ids'> & {
   isSeen: boolean;
-}
+};
 
 export type List = {
   id: string;
