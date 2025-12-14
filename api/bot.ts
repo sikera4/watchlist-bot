@@ -21,13 +21,19 @@ const keyboard = new Keyboard()
 bot.command('start', async (ctx) => {
   const userId = ctx.from?.id;
 
-  if (userId && !checkIfUserExists(userId)) {
+  if (!userId) {
+    return;
+  }
+
+  const userExists = await checkIfUserExists(userId);
+
+  if (!userExists) {
     await addUser(userId);
   }
 
   const startParam = ctx.match;
 
-  if (userId && startParam) {
+  if (startParam) {
     await addUserToWatchlist(userId, startParam);
   }
 
