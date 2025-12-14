@@ -63,6 +63,8 @@ bot.on('message', async (ctx) => {
     await ctx.reply(MESSAGES.CHOOSE_WATCHLIST_TO_SHARE, {
       reply_markup: watchlistsKeyboard,
     });
+
+    return;
   }
 
   await ctx.reply('Got another message!');
@@ -107,7 +109,9 @@ bot.on('callback_query:data', async (ctx) => {
         botUsername: bot.botInfo.username,
         watchlistId,
       });
-      await ctx.reply(inviteLink);
+      await ctx.reply(inviteLink, {
+        parse_mode: 'HTML'
+      });
 
       await ctx.answerCallbackQuery();
     }
