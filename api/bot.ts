@@ -21,23 +21,23 @@ const keyboard = new Keyboard()
 bot.command('start', async (ctx) => {
   const userId = ctx.from?.id;
 
-  if (!userId) {
-    return;
-  }
+  // if (!userId) {
+  //   return;
+  // }
 
-  const userExists = await checkIfUserExists(userId);
+  // const userExists = await checkIfUserExists(userId);
 
-  if (!userExists) {
-    await addUser(userId);
-  }
+  // if (!userExists) {
+  //   await addUser(userId);
+  // }
 
-  const startParam = ctx.match;
+  // const startParam = ctx.match;
 
-  if (startParam) {
-    await addUserToWatchlist(userId, startParam);
-  }
+  // if (startParam) {
+  //   await addUserToWatchlist(userId, startParam);
+  // }
 
-  await ctx.reply(MESSAGES.WELCOME, {
+  await ctx.reply(`${MESSAGES.WELCOME} ${userId}`, {
     reply_markup: keyboard,
   });
 });
