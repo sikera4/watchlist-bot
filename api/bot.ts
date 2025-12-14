@@ -108,6 +108,7 @@ bot.on('callback_query:data', async (ctx) => {
       const inviteLink = createWatchlistInviteLink({
         botUsername: bot.botInfo.username,
         watchlistId,
+        watchlistName: selectedWatchlist.name,
       });
       await ctx.reply(inviteLink, {
         parse_mode: 'HTML'
