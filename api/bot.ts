@@ -16,8 +16,7 @@ const bot = new Bot(token);
 const keyboard = new Keyboard()
   .text(MESSAGES.GET_MY_WATCHLISTS)
   .row()
-  .text(MESSAGES.CREATE_INVITE_LINK).row()
-  .webApp(MESSAGES.MANAGE_WATCHLISTS, WEB_APP_URL);
+  .text(MESSAGES.CREATE_INVITE_LINK);
 
 bot.command('start', async (ctx) => {
   const userId = ctx.from?.id;
