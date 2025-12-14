@@ -1,6 +1,7 @@
-import { Bot, InlineKeyboard, Keyboard, webhookCallback } from 'grammy';
+import { Bot, Keyboard, webhookCallback } from 'grammy';
 import { MESSAGES } from './constants.js';
 import { getWatchlists } from './requests/getWatchlists.js';
+import { buildWatchlistsKeyboard } from './utilities/buildWatchlistsKeyboard.js';
 import { formatWatchlist } from './utilities/formatWatchlist.js';
 
 const token = process.env.BOT_TOKEN;
@@ -21,8 +22,7 @@ bot.on('message', async (ctx) => {
   if (ctx.message.text === MESSAGES.GET_MY_WATCHLISTS) {
     const watchlists = await getWatchlists(ctx.from.id);
 
-    const watchlistsNames = (watchlists ?? []).map(({ name }) => InlineKeyboard.text(name ?? ''));
-    const watchlistsKeyboard = InlineKeyboard.from([watchlistsNames])
+    const watchlistsKeyboard = buildWatchlistsKeyboard(watchlists ?? []);
 
     await ctx.reply(MESSAGES.YOUR_WATCHLISTS, {
       reply_markup: watchlistsKeyboard
@@ -42,7 +42,7 @@ bot.on('callback_query:data', async (ctx) => {
   const watchlistWithNeededName = (watchlists ?? []).find(({ name }) => name === watchlistName);
 
   if (watchlistWithNeededName) {
-    await ctx.reply(`You selected the watchlist: ${watchlistWithNeededName.name}`);
+    await ctx.reply(`Вы выбрали список: ${watchlistWithNeededName.name}`);
     await ctx.reply(formatWatchlist(watchlistWithNeededName.movies), {
       parse_mode: 'HTML'
     });
