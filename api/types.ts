@@ -1,18 +1,14 @@
-export type Movie = {
-  title: string;
-  poster_path: string;
-  release_date: string;
-  genre_ids: number[];
+export type MediaItem = {
   id: number;
-};
-
-export type MovieInList = Omit<Movie, 'genre_ids'> & {
+  title: string;
+  releaseDate?: string;
+  posterPath: string;
   isSeen: boolean;
-};
+}
 
 export type List = {
   id: string;
   name?: string;
   usersIds: number[];
-  movies: MovieInList[];
+  items: MediaItem[];
 };

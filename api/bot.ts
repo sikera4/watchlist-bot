@@ -93,8 +93,8 @@ bot.on('callback_query:data', async (ctx) => {
     if (selectedWatchlist) {
       await ctx.reply(`Вы выбрали список: ${selectedWatchlist.name}`);
 
-      if (selectedWatchlist.movies.length) {
-        await ctx.reply(formatWatchlist(selectedWatchlist.movies), {
+      if (selectedWatchlist.items.length) {
+        await ctx.reply(formatWatchlist(selectedWatchlist.items), {
           parse_mode: 'HTML',
         });
       } else {
