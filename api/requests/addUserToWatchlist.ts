@@ -1,13 +1,5 @@
-import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../utilities/initializeFirebase.js';
+import { redeemInvite } from '../services/watchlists.js';
+import { getDb } from '../utilities/initializeFirebase.js';
 
-export const addUserToWatchlist = async (
-  userId: number,
-  watchlistId: string
-) => {
-  const userDocRef = doc(db, 'users', String(userId));
-
-  await updateDoc(userDocRef, {
-    watchlists: arrayUnion(watchlistId),
-  });
-};
+export const addUserToWatchlist = (userId: number, inviteToken: string) =>
+  redeemInvite(getDb(), userId, inviteToken);

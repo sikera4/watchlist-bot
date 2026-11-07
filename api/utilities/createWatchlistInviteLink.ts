@@ -1,13 +1,15 @@
+import { escapeHtml } from './escapeHtml.js';
+
 type Params = {
   botUsername: string;
-  watchlistId: string;
+  inviteToken: string;
   watchlistName?: string;
 };
 
 export const createWatchlistInviteLink = ({
   botUsername,
-  watchlistId,
+  inviteToken,
   watchlistName,
 }: Params): string => {
-  return `<a href="t.me/${botUsername}?start=${watchlistId}">${watchlistName ? `Приглашение в ${watchlistName}` : 'Приглашение'}</a>`;
+  return `<a href="https://t.me/${botUsername}?start=${encodeURIComponent(inviteToken)}">${watchlistName ? `Приглашение в ${escapeHtml(watchlistName)}` : 'Приглашение'}</a>`;
 };

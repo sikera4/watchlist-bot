@@ -4,11 +4,11 @@ export type MediaItem = {
   releaseDate?: string;
   posterPath: string;
   isSeen: boolean;
-}
+};
 
 export type List = {
   id: string;
   name?: string;
-  usersIds: number[];
+  userIds: string[];
   items: MediaItem[];
 };

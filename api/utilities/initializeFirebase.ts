@@ -1,20 +1,30 @@
-// Import the functions you need from the SDKs you need
-import { getApp, getApps, initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import {
+  applicationDefault,
+  cert,
+  getApp,
+  getApps,
+  initializeApp,
+} from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: 'AIzaSyARM8Na_iCXtb3DHH1yyS7UtCoZoV9sNSI',
-  authDomain: 'watchlist-1f961.firebaseapp.com',
-  projectId: 'watchlist-1f961',
-  storageBucket: 'watchlist-1f961.firebasestorage.app',
-  messagingSenderId: '650368805154',
-  appId: '1:650368805154:web:ba90980eabe484617b9d7b',
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-export { app, db };
+export function getDb() {
+  if (!getApps().length) {
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    if (!projectId) throw new Error('FIREBASE_PROJECT_ID is required');
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    if (Boolean(clientEmail) !== Boolean(privateKey)) {
+      throw new Error(
+        'Both FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY are required together'
+      );
+    }
+    initializeApp({
+      projectId,
+      credential:
+        clientEmail && privateKey
+          ? cert({ projectId, clientEmail, privateKey })
+          : applicationDefault(),
+    });
+  }
+  return getFirestore(getApp());
+}

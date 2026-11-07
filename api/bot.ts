@@ -1,17 +1,25 @@
-import { Bot, Keyboard, webhookCallback } from 'grammy';
-import { ACTION_DIVIDER, MESSAGES, WatchlistAction, WEB_APP_URL } from './constants.js';
+import { Bot, Keyboard } from 'grammy';
+import { ACTION_DIVIDER, MESSAGES, WatchlistAction } from './constants.js';
 import { getWatchlists } from './requests/getWatchlists.js';
 import { buildWatchlistsKeyboard } from './utilities/buildWatchlistsKeyboard.js';
 import { formatWatchlist } from './utilities/formatWatchlist.js';
 import { createWatchlistInviteLink } from './utilities/createWatchlistInviteLink.js';
-import { checkIfUserExists } from './utilities/checkIfUserExists.js';
 import { addUserToWatchlist } from './requests/addUserToWatchlist.js';
 import { addUser } from './requests/addUser.js';
+import { AccessError, issueInvite } from './services/watchlists.js';
+import { getDb } from './utilities/initializeFirebase.js';
+import { createWebhookHandler } from './utilities/webhook.js';
 
 const token = process.env.BOT_TOKEN;
 if (!token) throw new Error('BOT_TOKEN is unset');
 
 const bot = new Bot(token);
+
+// Keep personal watchlists and invitation links out of group chats.
+bot.use(async (ctx, next) => {
+  if (ctx.chat?.type !== 'private') return;
+  await next();
+});
 
 const keyboard = new Keyboard()
   .text(MESSAGES.GET_MY_WATCHLISTS)
@@ -25,16 +33,21 @@ bot.command('start', async (ctx) => {
     return;
   }
 
-  const userExists = await checkIfUserExists(userId);
-
-  if (!userExists) {
-    await addUser(userId);
-  }
-
   const startParam = ctx.match;
 
-  if (startParam) {
-    await addUserToWatchlist(userId, startParam);
+  try {
+    if (startParam) {
+      await addUserToWatchlist(userId, startParam);
+      await ctx.reply('Список добавлен.');
+    } else {
+      await addUser(userId);
+    }
+  } catch (error) {
+    if (!(error instanceof AccessError)) throw error;
+    await ctx.reply(
+      'Не удалось открыть приглашение или профиль. Попросите новую ссылку у участника списка.'
+    );
+    return;
   }
 
   await ctx.reply(MESSAGES.WELCOME, {
@@ -116,14 +129,25 @@ bot.on('callback_query:data', async (ctx) => {
     if (selectedWatchlist) {
       await ctx.reply(`Вы выбрали список: ${selectedWatchlist.name}`);
 
+      let inviteToken: string;
+      try {
+        inviteToken = await issueInvite(getDb(), ctx.from.id, watchlistId);
+      } catch (error) {
+        if (!(error instanceof AccessError)) throw error;
+        await ctx.answerCallbackQuery({ text: 'Список больше недоступен' });
+        return;
+      }
       const inviteLink = createWatchlistInviteLink({
         botUsername: bot.botInfo.username,
-        watchlistId,
+        inviteToken,
         watchlistName: selectedWatchlist.name ?? '',
       });
       await ctx.reply(inviteLink, {
-        parse_mode: 'HTML'
+        parse_mode: 'HTML',
       });
+      await ctx.reply(
+        'Ссылка действует 7 дней. Любой, у кого есть ссылка, сможет присоединиться к списку.'
+      );
     }
 
     await ctx.answerCallbackQuery();
@@ -132,6 +156,8 @@ bot.on('callback_query:data', async (ctx) => {
   }
 });
 
-const botWithWebhook: unknown = webhookCallback(bot, 'https');
+const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
+if (!secret) throw new Error('TELEGRAM_WEBHOOK_SECRET is unset');
+const botWithWebhook = createWebhookHandler(bot, secret);
 
 export default botWithWebhook;
