@@ -6,20 +6,25 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node dist/server.js",
-    "lint:prettier": "prettier --write 'api/**/*.{js,jsx,ts,tsx,scss}'"
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test tests/webhook.test.mjs tests/deployment.test.mjs",
+    "test:firestore": "npm run build && firebase emulators:exec --only firestore --project demo-watchlist-bot \"node --test tests/firestore.test.mjs\"",
+    "webhook:configure": "node --env-file=.env scripts/configure-webhook.mjs",
+    "lint:prettier": "prettier --write 'api/**/*.ts' 'src/**/*.ts' 'tests/**/*.mjs' 'scripts/**/*.mjs'",
+    "format:check": "prettier --check 'api/**/*.ts' 'src/**/*.ts' 'tests/**/*.mjs' 'scripts/**/*.mjs'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "firebase": "12.6.0",
+    "firebase-admin": "14.5.0",
     "grammy": "1.38.4"
   },
   "devDependencies": {
     "@types/node": "22.19.1",
     "@vercel/node": "5.5.13",
+    "firebase-tools": "15.35.0",
     "prettier": "3.7.4",
     "typescript": "5.9.3"
   },
