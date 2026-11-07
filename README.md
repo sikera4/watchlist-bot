@@ -2,6 +2,12 @@
 
 The bot uses Firebase Admin on the server. Telegram user IDs are stored as strings. User provisioning runs in a transaction and never resets an existing watchlist array. A matching legacy numeric user ID is normalized when that user starts the bot or joins through an invitation; unrelated fields are preserved.
 
+## Project layout
+
+`api/bot.ts` is the only Vercel Function entry point and re-exports the handler from `src/bot.ts`. All bot logic, requests, types, and utilities belong under `src/`. Vercel treats supported source files under `api/` as function entries, so do not put helpers there: the old layout had 13 entries and exceeded the Hobby limit of 12. The webhook URL remains `/api/bot`.
+
+TypeScript emits `build/api/bot.js` and `build/src/**`. Run `npm run lint:prettier` to format source, scripts, and tests, or `npm run format:check` to check formatting.
+
 ## Configuration
 
 Use Node.js 22 and `npm ci`. Copy `.env.example` to your local `.env` and set the same values in the bot's hosting project (not only the Mini App's hosting project):

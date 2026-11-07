@@ -8,10 +8,11 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "npm run build && node --test tests/webhook.test.mjs",
+    "test": "npm run build && node --test tests/webhook.test.mjs tests/deployment.test.mjs",
     "test:firestore": "npm run build && firebase emulators:exec --only firestore --project demo-watchlist-bot \"node --test tests/firestore.test.mjs\"",
     "webhook:configure": "node --env-file=.env scripts/configure-webhook.mjs",
-    "lint:prettier": "prettier --write 'api/**/*.{js,jsx,ts,tsx,scss}'"
+    "lint:prettier": "prettier --write 'api/**/*.ts' 'src/**/*.ts' 'tests/**/*.mjs' 'scripts/**/*.mjs'",
+    "format:check": "prettier --check 'api/**/*.ts' 'src/**/*.ts' 'tests/**/*.mjs' 'scripts/**/*.mjs'"
   },
   "keywords": [],
   "author": "",

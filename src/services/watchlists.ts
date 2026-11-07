@@ -12,8 +12,11 @@ export function canonicalUserId(value: number | string): string {
   ) {
     throw new AccessError('Invalid user ID');
   }
+
   const id = String(value);
+
   if (!/^[1-9]\d*$/.test(id)) throw new AccessError('Invalid user ID');
+
   return id;
 }
 
@@ -37,6 +40,7 @@ function members(data: DocumentData | undefined): string[] {
   ) {
     throw new AccessError('Invalid watchlist membership');
   }
+
   return data.userIds;
 }
 
@@ -59,8 +63,10 @@ function checkUser(data: DocumentData | undefined, uid: string) {
 export async function ensureUser(db: Firestore, value: number | string) {
   const uid = canonicalUserId(value);
   const ref = db.collection('users').doc(uid);
+
   await db.runTransaction(async (transaction) => {
     const snapshot = await transaction.get(ref);
+
     if (!snapshot.exists) {
       transaction.create(ref, {
         userId: uid,
@@ -69,6 +75,7 @@ export async function ensureUser(db: Firestore, value: number | string) {
       });
     } else {
       checkUser(snapshot.data(), uid);
+
       if (snapshot.get('userId') !== uid)
         transaction.update(ref, { userId: uid });
     }
@@ -80,10 +87,12 @@ export async function readWatchlists(
   value: number | string
 ): Promise<List[]> {
   const uid = canonicalUserId(value);
+
   const snapshot = await db
     .collection('watchlists')
     .where('userIds', 'array-contains', uid)
     .get();
+
   return snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as List);
 }
 
@@ -98,12 +107,17 @@ export async function issueInvite(
   listId: string
 ) {
   const uid = canonicalUserId(value);
+
   if (!validDocumentId(listId)) throw new AccessError('Invalid watchlist');
+
   const token = `i_${randomBytes(32).toString('base64url')}`;
+
   await db.runTransaction(async (transaction) => {
     const list = await transaction.get(db.collection('watchlists').doc(listId));
+
     if (!list.exists || !members(list.data()).includes(uid))
       throw new AccessError('Not a member');
+
     transaction.create(
       db.collection('watchlistInvites').doc(tokenHash(token)),
       {
@@ -114,6 +128,7 @@ export async function issueInvite(
       }
     );
   });
+
   return token;
 }
 
@@ -123,13 +138,16 @@ export async function redeemInvite(
   token: string
 ) {
   const uid = canonicalUserId(value);
+
   // Legacy raw document IDs are not proof of an invitation.
   if (!tokenPattern.test(token)) throw new AccessError('Invalid invitation');
+
   await db.runTransaction(async (transaction) => {
     const invitation = await transaction.get(
       db.collection('watchlistInvites').doc(tokenHash(token))
     );
     const data = invitation.data();
+
     if (
       !data ||
       typeof data.watchlistId !== 'string' ||
@@ -139,15 +157,19 @@ export async function redeemInvite(
       data.expiresAt.toMillis() <= Date.now()
     )
       throw new AccessError('Invalid or expired invitation');
+
     const listRef = db.collection('watchlists').doc(data.watchlistId);
     const userRef = db.collection('users').doc(uid);
     const [list, user] = await transaction.getAll(listRef, userRef);
+
     if (!list?.exists || !members(list.data()).includes(data.createdBy)) {
       throw new AccessError('Invitation no longer valid');
     }
+
     // Both writes commit together. Repeated Telegram deliveries are idempotent.
     if (user?.exists) {
       checkUser(user.data(), uid);
+
       transaction.update(userRef, {
         userId: uid,
         watchlists: FieldValue.arrayUnion(data.watchlistId),
@@ -159,6 +181,7 @@ export async function redeemInvite(
         createdAt: FieldValue.serverTimestamp(),
       });
     }
+
     transaction.update(listRef, { userIds: FieldValue.arrayUnion(uid) });
   });
 }
